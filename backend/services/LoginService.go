@@ -13,7 +13,7 @@ import (
 func LoginService(c *gin.Context) {
 	tenantPageID := c.GetHeader("X-Tenant-Page-Id")
 	if tenantPageID == "" {
-		c.JSON(400, gin.H{"success": false, "error": "Tenant not informed."})
+		c.JSON(400, responses.UserLoginResponse{Sucess: false, Message: "Tenant not informed."})
 		return
 	}
 
@@ -22,36 +22,36 @@ func LoginService(c *gin.Context) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(404, gin.H{"success": false, "error": "Tenant not found"})
+			c.JSON(404, responses.UserLoginResponse{Sucess: false, Message: "Tenant not found"})
 			return
 		}
-		c.JSON(500, gin.H{"success": false, "error": "Database error"})
+		c.JSON(500, responses.UserLoginResponse{Sucess: false, Message: "Database error"})
 		return
 	}
 
 	var body models.LoginModel
 	if err := c.Bind(&body); err != nil {
-		c.JSON(400, gin.H{"success": false, "error": "Invalid request body"})
+		c.JSON(400, responses.UserLoginResponse{Sucess: false, Message: "Invalid request body"})
 		return
 	}
 
 	if err := helpers.ValidateEmail(body.Email); err != nil {
-		c.JSON(400, gin.H{"success": false, "error": err.Error()})
+		c.JSON(400, responses.UserLoginResponse{Sucess: false, Message: err.Error()})
 		return
 	}
 
 	if err := helpers.ValidatePassword(body.Password); err != nil {
-		c.JSON(400, gin.H{"success": false, "error": err.Error()})
+		c.JSON(400, responses.UserLoginResponse{Sucess: false, Message: err.Error()})
 		return
 	}
 
 	exists, err := helpers.EmailExists(c.Request.Context(), config.DB, body.Email)
 	if err != nil {
-		c.JSON(500, gin.H{"success": false, "error": "Database error"})
+		c.JSON(500, responses.UserLoginResponse{Sucess: false, Message: "Database error"})
 		return
 	}
 	if !exists {
-		c.JSON(400, gin.H{"success": false, "error": "Verify email or password"})
+		c.JSON(400, responses.UserLoginResponse{Sucess: false, Message: "Verify email or password"})
 		return
 	}
 
@@ -72,7 +72,7 @@ func LoginService(c *gin.Context) {
 	LEFT JOIN user_profiles p ON p.user_id = u.id
 	LEFT JOIN tenant_users tu ON tu.user_id = u.id AND tu.tenant_id = $2
 	WHERE u.email = $1
-`, body.Email, tenantID).Scan(
+	`, body.Email, tenantID).Scan(
 		&user.Id,
 		&user.Email,
 		&hashedPassword,
@@ -85,10 +85,10 @@ func LoginService(c *gin.Context) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(400, gin.H{"success": false, "error": "Verify email or password"})
+			c.JSON(400, responses.UserLoginResponse{Sucess: false, Message: "Verify email or password"})
 			return
 		}
-		c.JSON(500, gin.H{"success": false, "error": "Database error"})
+		c.JSON(500, responses.UserLoginResponse{Sucess: false, Message: "Database error"})
 		return
 	}
 
@@ -96,28 +96,28 @@ func LoginService(c *gin.Context) {
 	err = config.DB.QueryRow(`SELECT EXISTS (SELECT 1 FROM tenant_users WHERE user_id = $1 AND tenant_id = $2)`, user.Id, tenantID).Scan(&hasAccess)
 
 	if err != nil {
-		c.JSON(500, gin.H{"success": false, "error": "Database error"})
+		c.JSON(500, responses.UserLoginResponse{Sucess: false, Message: "Database error"})
 		return
 	}
 
 	if !hasAccess {
-		c.JSON(403, gin.H{"success": false, "error": "User does not belong to this tenant."})
+		c.JSON(403, responses.UserLoginResponse{Sucess: false, Message: "User does not belong to this tenant."})
 		return
 	}
 
 	if user.Role == "" {
-		c.JSON(403, gin.H{"success": false, "error": "User does not belong to this tenant."})
+		c.JSON(403, responses.UserLoginResponse{Sucess: false, Message: "User does not belong to this tenant."})
 		return
 	}
 
 	if !helpers.CheckPasswordHash(body.Password, hashedPassword) {
-		c.JSON(400, gin.H{"success": false, "error": "Verify email or password"})
+		c.JSON(400, responses.UserLoginResponse{Sucess: false, Message: "Verify email or password"})
 		return
 	}
 
 	token, err := helpers.GenerateToken(user)
 	if err != nil {
-		c.JSON(500, gin.H{"success": false, "error": "Internal error"})
+		c.JSON(500, responses.UserLoginResponse{Sucess: false, Message: "Internal error"})
 		return
 	}
 
@@ -131,8 +131,8 @@ func LoginService(c *gin.Context) {
 	helpers.SetAuthCookie(c, token, logged_timer)
 
 	c.JSON(200, responses.UserLoginResponse{
-		Sucess:  "ok",
-		Message: "Login feito com sucesso",
+		Sucess:  true,
+		Message: "Login successful.",
 		Data: responses.UserDataLogin{
 			Id:         user.Id,
 			ProfileImg: user.Profile_img,

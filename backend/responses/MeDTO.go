@@ -1,6 +1,6 @@
 package responses
 
-type UserDataRegister struct {
+type UserDataMe struct {
 	Id         string `json:"id"`
 	ProfileImg string `json:"profile_img"`
 	FirstName  string `json:"first_name"`
@@ -10,8 +10,8 @@ type UserDataRegister struct {
 	Plan       string `json:"plan"`
 }
 
-type UserRegisterResponse struct {
-	Sucess  bool             `json:"sucess"`
-	Message string           `json:"message"`
-	Data    UserDataRegister `json:"data"`
+type MeResponse struct {
+	Sucess  bool       `json:"sucess"`
+	Message string     `json:"message"`
+	Data    UserDataMe `json:"data"`
 }

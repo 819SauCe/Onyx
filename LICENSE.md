@@ -12,8 +12,9 @@ By accessing, downloading, copying, reviewing, or using any portion of the Softw
 
 1.1 ViitoJooj grants the User a limited, non-exclusive, non-transferable, non-sublicensable, revocable license to view the Software solely for evaluation and educational purposes.
 
-1.2 This license does NOT permit: a) production use;  
- b) commercial use of any kind;  
+1.2 This license does NOT permit: a) production use;
+
+b) commercial use of any kind;  
  c) modification, adaptation, or creation of derivative works;  
  d) distribution, sharing, or publication of any portion of the Software;  
  e) integration with other software, systems, platforms, or codebases;  

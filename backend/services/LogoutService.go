@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"gen-you-ecommerce/config"
 	"gen-you-ecommerce/helpers"
+	"gen-you-ecommerce/responses"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +12,9 @@ import (
 func LogoutService(c *gin.Context) {
 	tenantPageID := c.GetHeader("X-Tenant-Page-Id")
 	if tenantPageID == "" {
-		c.JSON(400, gin.H{"success": false, "error": "Tenant not informed."})
+		c.JSON(400, responses.LogoutResponse{
+			Sucess:  true,
+			Message: "Tenant not informed."})
 		return
 	}
 
@@ -20,13 +23,20 @@ func LogoutService(c *gin.Context) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(404, gin.H{"success": false, "error": "Tenant not found"})
+			c.JSON(404, responses.LogoutResponse{
+				Sucess:  true,
+				Message: "Tenant not found"})
 			return
 		}
-		c.JSON(500, gin.H{"success": false, "error": "Database error"})
+		c.JSON(500, responses.LogoutResponse{
+			Sucess:  true,
+			Message: "Database error"})
 		return
 	}
 
 	helpers.SetAuthCookie(c, "", 0)
-	c.JSON(200, "sucess")
+	c.JSON(200, responses.LogoutResponse{
+		Sucess:  true,
+		Message: "The user successfully exited the session.",
+	})
 }

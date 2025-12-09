@@ -1,6 +1,6 @@
 package responses
 
 type LogoutResponse struct {
-	Sucess  string `json:"sucess"`
+	Sucess  bool   `json:"sucess"`
 	Message string `json:"message"`
 }

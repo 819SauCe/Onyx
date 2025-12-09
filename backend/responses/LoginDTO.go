@@ -11,7 +11,7 @@ type UserDataLogin struct {
 }
 
 type UserLoginResponse struct {
-	Sucess  string        `json:"sucess"`
+	Sucess  bool          `json:"sucess"`
 	Message string        `json:"message"`
 	Data    UserDataLogin `json:"data"`
 }

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"gen-you-ecommerce/config"
 	"gen-you-ecommerce/helpers"
+	"gen-you-ecommerce/responses"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,9 @@ import (
 func MeService(c *gin.Context) {
 	tenantPageID := c.GetHeader("X-Tenant-Page-Id")
 	if tenantPageID == "" {
-		c.JSON(400, gin.H{"success": false, "error": "Tenant not informed."})
+		c.JSON(400, responses.MeResponse{
+			Sucess:  true,
+			Message: "Tenant not informed."})
 		return
 	}
 
@@ -21,10 +24,14 @@ func MeService(c *gin.Context) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(404, gin.H{"success": false, "error": "Tenant not found"})
+			c.JSON(404, responses.MeResponse{
+				Sucess:  true,
+				Message: "Tenant not found"})
 			return
 		}
-		c.JSON(500, gin.H{"success": false, "error": "Database error"})
+		c.JSON(500, responses.MeResponse{
+			Sucess:  true,
+			Message: "Database error"})
 		return
 	}
 
@@ -56,8 +63,17 @@ func MeService(c *gin.Context) {
 		Plan:        claims["plan"].(string),
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"user":    user,
+	c.JSON(200, responses.MeResponse{
+		Sucess:  true,
+		Message: "Login successful.",
+		Data: responses.UserDataMe{
+			Id:         user.Id,
+			ProfileImg: user.Profile_img,
+			FirstName:  user.First_name,
+			LastName:   user.Last_name,
+			Email:      user.Email,
+			Role:       user.Role,
+			Plan:       user.Plan,
+		},
 	})
 }
