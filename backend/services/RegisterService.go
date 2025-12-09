@@ -12,29 +12,7 @@ import (
 )
 
 func RegisterService(c *gin.Context) {
-	tenantPageID := c.GetHeader("X-Tenant-Page-Id")
-	if tenantPageID == "" {
-		c.JSON(400, responses.UserRegisterResponse{
-			Sucess:  true,
-			Message: "Tenant not informed."})
-		return
-	}
-
-	var tenantID string
-	err := config.DB.QueryRow(`SELECT id FROM tenants WHERE page_id = $1`, tenantPageID).Scan(&tenantID)
-
-	if err != nil {
-		if err == sql.ErrNoRows {
-			c.JSON(404, responses.UserRegisterResponse{
-				Sucess:  true,
-				Message: "Tenant not found"})
-			return
-		}
-		c.JSON(500, responses.UserRegisterResponse{
-			Sucess:  true,
-			Message: "Database error"})
-		return
-	}
+	tenantID := c.MustGet("tenantID").(string)
 
 	var body models.RegisterModel
 	if err := c.Bind(&body); err != nil {
@@ -106,7 +84,7 @@ func RegisterService(c *gin.Context) {
 		return
 	}
 
-	_, err = tx.Exec(`INSERT INTO tenant_users (tenant_id, user_id, role) VALUES ($1, $2, $3)`, tenantID, userID, "customer")
+	_, err = tx.Exec(`INSERT INTO tenant_users (tenant_id, user_id, role) VALUES ($1, $2, $3)`, tenantID, userID, "user")
 
 	if err != nil {
 		c.JSON(500, responses.UserRegisterResponse{
@@ -128,7 +106,7 @@ func RegisterService(c *gin.Context) {
 		Profile_img: "",
 		First_name:  body.First_name,
 		Last_name:   body.Last_name,
-		Role:        "customer",
+		Role:        "user",
 	}
 
 	token, err := helpers.GenerateToken(user)

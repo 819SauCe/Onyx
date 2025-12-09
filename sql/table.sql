@@ -30,21 +30,21 @@ CREATE TABLE IF NOT EXISTS tenants (
 CREATE TABLE IF NOT EXISTS tenant_users (
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    role VARCHAR(25) NOT NULL DEFAULT 'customer',
+    role VARCHAR(25) NOT NULL DEFAULT 'user',
     PRIMARY KEY (tenant_id, user_id)
 );
 
-CREATE TABLE IF NOT EXISTS sites (
+CREATE TABLE IF NOT EXISTS pages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     name VARCHAR(150) NOT NULL,
     page_id VARCHAR(100) UNIQUE NOT NULL,
     domain VARCHAR(255),
-    theme JSONB,
+    theme_id VARCHAR(100),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
-CREATE INDEX idx_sites_tenant_id ON sites(tenant_id);
+CREATE INDEX idx_pages_tenant_id ON pages(tenant_id);
 CREATE INDEX idx_tenant_users_user_id ON tenant_users(user_id);

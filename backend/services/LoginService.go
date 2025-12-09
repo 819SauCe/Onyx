@@ -11,23 +11,7 @@ import (
 )
 
 func LoginService(c *gin.Context) {
-	tenantPageID := c.GetHeader("X-Tenant-Page-Id")
-	if tenantPageID == "" {
-		c.JSON(400, responses.UserLoginResponse{Sucess: false, Message: "Tenant not informed."})
-		return
-	}
-
-	var tenantID string
-	err := config.DB.QueryRow(`SELECT id FROM tenants WHERE page_id = $1`, tenantPageID).Scan(&tenantID)
-
-	if err != nil {
-		if err == sql.ErrNoRows {
-			c.JSON(404, responses.UserLoginResponse{Sucess: false, Message: "Tenant not found"})
-			return
-		}
-		c.JSON(500, responses.UserLoginResponse{Sucess: false, Message: "Database error"})
-		return
-	}
+	tenantID := c.MustGet("tenantID").(string)
 
 	var body models.LoginModel
 	if err := c.Bind(&body); err != nil {
