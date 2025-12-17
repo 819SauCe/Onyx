@@ -1,0 +1,92 @@
+@use '../variables' as *;
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.projectsContainer {
+    display: flex;
+    gap: 1rem;
+    width: 90%;
+    min-height: 50vh;
+    align-items: flex-start;
+}
+
+.card {
+    width: 15rem;
+    height: 17rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, $background-color-secondary, lighten($background-color-secondary, 5%));
+    border: 1px dashed #c8c8cc;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        border-color: $color-primary;
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+
+        .plus,
+        .sync {
+            background-color: $color-primary;
+            color: white;
+        }
+    }
+}
+
+.plus,
+.sync {
+    width: 4.5rem;
+    height: 4.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid $color-primary;
+    color: $color-primary;
+    font-size: 2.5rem;
+    font-weight: 300;
+    transition: all 0.3s ease;
+}
+
+.title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: $font-color-primary;
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    color: $font-color-secondary;
+}
+
+.erpRow {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.erpLogo {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    img {
+        width: 80%;
+        height: 80%;
+        object-fit: contain;
+    }
+}
