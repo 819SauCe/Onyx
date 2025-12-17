@@ -4,10 +4,8 @@
 
 # Jestex
 
-Jestex é um **SaaS de e-commerce**.  
-A versão inicial (v1) será aberta e pública no GitHub, servindo tanto como produto funcional quanto como experimento técnico.
-
-O projeto tem como foco **simplicidade no código**, aprendizado prático e validação de ideias.  
+Jestex é um **SaaS de criação de paginas**.  
+A versão inicial (v1) será aberta e pública no GitHub, servindo tanto como produto funcional quanto como experimento técnico. O projeto tem como foco **simplicidade no código**, aprendizado prático e validação de ideias.  
 Ele existe para testar minhas habilidades com **Golang**, estudar arquitetura escalável e, se possível, gerar receita no futuro.
 
 ### Stack e decisões técnicas
