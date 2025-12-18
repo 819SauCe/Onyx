@@ -18,13 +18,17 @@ export function Products() {
 
       <div className={styles.projectsContainer}>
         <button className={styles.card}>
-          <span className={styles.plus}>+</span>
+          <span className={styles.iconWrapper}>
+            <span className={styles.plus}>+</span>
+          </span>
           <p className={styles.title}>add</p>
           <span className={styles.subtitle}>choose your product</span>
         </button>
 
         <button className={styles.card}>
-          <span className={styles.sync}>↻</span>
+          <span className={styles.iconWrapper}>
+            <span className={styles.sync}>↻</span>
+          </span>
           <p className={styles.title}>import from you ERP</p>
           <span className={styles.subtitle}>connect and sync in minutes</span>
 

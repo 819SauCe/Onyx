@@ -36,6 +36,41 @@ function toStr(v: unknown) {
   return v === null || v === undefined ? "" : String(v);
 }
 
+function readCachedUser(): User | undefined {
+  const id = localStorage.getItem("userId");
+  if (!id) return undefined;
+
+  return {
+    id,
+    profile_img: localStorage.getItem("userProfileImg") || "",
+    first_name: localStorage.getItem("userFirstName") || "",
+    last_name: localStorage.getItem("userLastName") || "",
+    email: localStorage.getItem("userEmail") || "",
+    role: localStorage.getItem("userRole") || "",
+    plan: localStorage.getItem("userPlan") || "",
+  };
+}
+
+function writeCachedUser(u: Exclude<User, null>) {
+  localStorage.setItem("userId", u.id);
+  localStorage.setItem("userProfileImg", u.profile_img);
+  localStorage.setItem("userFirstName", u.first_name);
+  localStorage.setItem("userLastName", u.last_name);
+  localStorage.setItem("userEmail", u.email);
+  localStorage.setItem("userRole", u.role);
+  localStorage.setItem("userPlan", u.plan);
+}
+
+function clearCachedUser() {
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userProfileImg");
+  localStorage.removeItem("userFirstName");
+  localStorage.removeItem("userLastName");
+  localStorage.removeItem("userEmail");
+  localStorage.removeItem("userRole");
+  localStorage.removeItem("userPlan");
+}
+
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | undefined>(undefined);
   const ran = useRef(false);
@@ -44,17 +79,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     if (ran.current) return;
     ran.current = true;
 
-    const cachedId = localStorage.getItem("userId");
-    if (cachedId) {
-      setUser({
-        id: cachedId,
-        profile_img: localStorage.getItem("userProfileImg") || "",
-        first_name: localStorage.getItem("userFirstName") || "",
-        last_name: localStorage.getItem("userLastName") || "",
-        email: localStorage.getItem("userEmail") || "",
-        role: localStorage.getItem("userRole") || "",
-        plan: localStorage.getItem("userPlan") || "",
-      });
+    const cached = readCachedUser();
+    if (cached) {
+      setUser(cached);
+      return;
     }
 
     (async () => {
@@ -65,18 +93,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         });
 
         if (!res.ok) {
-          if (res.status === 401) {
-            localStorage.removeItem("userId");
-            localStorage.removeItem("userProfileImg");
-            localStorage.removeItem("userFirstName");
-            localStorage.removeItem("userLastName");
-            localStorage.removeItem("userEmail");
-            localStorage.removeItem("userRole");
-            localStorage.removeItem("userPlan");
-            setUser(null);
-          } else {
-            if (user === undefined) setUser(null);
-          }
+          if (res.status === 401) clearCachedUser();
+          setUser(null);
           return;
         }
 
@@ -84,6 +102,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         const data = payload?.data;
 
         if (!data?.id) {
+          clearCachedUser();
           setUser(null);
           return;
         }
@@ -98,17 +117,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           plan: toStr(data.plan),
         };
 
-        localStorage.setItem("userId", fresh.id);
-        localStorage.setItem("userProfileImg", fresh.profile_img);
-        localStorage.setItem("userFirstName", fresh.first_name);
-        localStorage.setItem("userLastName", fresh.last_name);
-        localStorage.setItem("userEmail", fresh.email);
-        localStorage.setItem("userRole", fresh.role);
-        localStorage.setItem("userPlan", fresh.plan);
-
+        writeCachedUser(fresh);
         setUser(fresh);
       } catch {
-        if (user === undefined) setUser(null);
+        setUser(null);
       }
     })();
   }, []);
