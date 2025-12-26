@@ -1,5 +1,5 @@
 <p align="center">
-  🇧🇷 Português | <a href="./readme.en.md">🇺🇸 English</a>
+  🇧🇷 Português | <a href="./README.en.md">🇺🇸 English</a>
 </p>
 
 # Jesterx
